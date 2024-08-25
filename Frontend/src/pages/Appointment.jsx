@@ -4,6 +4,7 @@ import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import { TbFidgetSpinner } from "react-icons/tb";
 import Swal from "sweetalert2";
 import axios from "axios";
+import "react-multi-date-picker/styles/layouts/mobile.css";
 
 const Appointment = () => {
   const [time, setTime] = useState(null);
@@ -21,6 +22,11 @@ const Appointment = () => {
     const formattedDate = date ? date.format("DD/MM/YYYY dddd") : ""; // Format the date
     const formattedTime = time ? time.format("hh:mm A") : ""; // Format the time
 
+    const parts = formattedDate.split(" ");
+
+    // The last part is the day of the week
+    const day = parts[parts.length - 1];
+
     const appointmentData = {
       name,
       email,
@@ -28,6 +34,7 @@ const Appointment = () => {
       comment,
       date: formattedDate,
       time: formattedTime,
+      day,
     };
 
     axios
@@ -118,6 +125,7 @@ const Appointment = () => {
                 <DatePicker
                   placeholder="Select The Date"
                   required
+                  className="rmdp-mobile"
                   inputClass="input w-full text-gray-800 border-sky-500  border "
                   format="DD/MM/YYYY dddd"
                   onChange={(date) => {

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { GrLogout } from "react-icons/gr";
+import { TbCalendarCancel } from "react-icons/tb";
 import { HiOutlineSpeakerphone } from "react-icons/hi";
 import { FaFileSignature, FaHome, FaRegUser, FaUsers } from "react-icons/fa";
 import { RiCoupon3Fill } from "react-icons/ri";
@@ -80,6 +81,11 @@ const Sidebar = () => {
                   label="All Appointments"
                   address="/dashboard/allAppointments"
                   icon={FaUsers}
+                />
+                <MenuItem
+                  label="Block Appointment"
+                  address="/dashboard/blockedDates"
+                  icon={TbCalendarCancel}
                 />
                 <MenuItem
                   label="Agreement Requests"

@@ -4,6 +4,7 @@ import Dashboard from "../layouts/Dashboard";
 import Appointment from "../pages/Appointment";
 import AllAppointments from "../pages/dashboard/AllAppointments";
 import TodayAppointments from "../pages/dashboard/TodayAppointments";
+import BlockAppointmentDates from "../pages/dashboard/BlockAppointmentDates";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
       {
         path: "todayAppointments",
         element: <TodayAppointments />,
+      },
+      {
+        path: "blockedDates",
+        element: <BlockAppointmentDates />,
       },
     ],
   },
