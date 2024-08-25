@@ -164,9 +164,25 @@ async function run() {
     });
 
     app.get("/appointments", async (req, res) => {
+      const page = parseInt(req.query.page) || 1;
+      const limit = 6;
+      const skip = (page - 1) * limit;
+
       try {
-        const appointments = await appointmentCollection.find({}).toArray();
-        res.send(appointments);
+        const appointments = await appointmentCollection
+          .find({})
+          .skip(skip)
+          .limit(limit)
+          .toArray();
+
+        const total = await appointmentCollection.countDocuments();
+
+        res.send({
+          appointments,
+          total,
+          totalPages: Math.ceil(total / limit),
+          currentPage: page,
+        });
       } catch (error) {
         console.error("Error fetching appointments:", error);
         res.status(500).send({ message: "Error fetching appointments" });
