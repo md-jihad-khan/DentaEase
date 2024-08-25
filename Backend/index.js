@@ -165,7 +165,7 @@ async function run() {
 
     app.get("/appointments", async (req, res) => {
       const page = parseInt(req.query.page) || 1;
-      const limit = 6;
+      const limit = 1;
       const skip = (page - 1) * limit;
 
       try {

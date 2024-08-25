@@ -38,7 +38,20 @@ const AllAppointments = () => {
     fetchAppointments();
   }, [currentPage]);
 
-  let pages = [...Array(totalPages).keys()].map((element) => element + 1);
+  const MAX_VISIBLE_PAGES = 8;
+  const halfMaxPages = Math.floor(MAX_VISIBLE_PAGES / 2);
+
+  // Calculate the start page
+  let startPage = Math.max(1, currentPage - halfMaxPages);
+
+  // Calculate the end page
+  let endPage = startPage + MAX_VISIBLE_PAGES - 1;
+
+  // If the endPage exceeds the totalPages, adjust the startPage and endPage
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, endPage - MAX_VISIBLE_PAGES + 1);
+  }
 
   if (loading) return <p>Loading appointments...</p>;
   if (error) return <p>{error}</p>;
@@ -90,7 +103,7 @@ const AllAppointments = () => {
           <button
             disabled={currentPage === 1}
             onClick={() => handlePaginationButton(currentPage - 1)}
-            className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-yellow-500 hover:text-white"
+            className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-sky-500 hover:text-white"
           >
             <div className="flex items-center -mx-1">
               <svg
@@ -110,21 +123,26 @@ const AllAppointments = () => {
               <span className="mx-1">previous</span>
             </div>
           </button>
-          {pages.map((btnNum) => (
+
+          {Array.from(
+            { length: endPage - startPage + 1 },
+            (_, idx) => startPage + idx
+          ).map((btnNum) => (
             <button
               onClick={() => handlePaginationButton(btnNum)}
               key={btnNum}
               className={`hidden ${
-                currentPage === btnNum ? "bg-yellow-500 text-white" : ""
-              } px-4 py-2 mx-1 transition-colors duration-300 transform rounded-md sm:inline hover:bg-yellow-500 hover:text-white`}
+                currentPage === btnNum ? "bg-sky-500 text-white" : ""
+              } px-4 py-2 mx-1 transition-colors duration-300 transform rounded-md sm:inline hover:bg-sky-500 hover:text-white`}
             >
               {btnNum}
             </button>
           ))}
+
           <button
             disabled={currentPage === totalPages}
             onClick={() => handlePaginationButton(currentPage + 1)}
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-yellow-500 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500"
+            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-sky-500 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500"
           >
             <div className="flex items-center -mx-1">
               <span className="mx-1">Next</span>
