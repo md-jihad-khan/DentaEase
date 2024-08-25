@@ -8,6 +8,7 @@ import { BsCashCoin } from "react-icons/bs";
 import { FaHistory } from "react-icons/fa";
 import { MdOutlineAnnouncement } from "react-icons/md";
 import { AiOutlineBars } from "react-icons/ai";
+import { HiCalendar } from "react-icons/hi";
 
 import MenuItem from "./MenuItem";
 
@@ -28,9 +29,8 @@ const Sidebar = () => {
         <div>
           <div className="w-full mx-auto">
             <Link className="flex " to="/">
-              <img src="/logo.svg" alt="logo" className="h-10" />
               <p className="font-poppins text-xl flex items-center font-bold">
-                <span className="text-yellow-500">Solo Unit</span> X
+                <span className="text-sky-500">Denta</span> Ease
               </p>
             </Link>
           </div>
@@ -53,10 +53,9 @@ const Sidebar = () => {
         <div>
           <div>
             <div className="w-full  md:flex   rounded-lg items-center  mx-auto">
-              <Link className="flex " to="/">
-                <img src="/logo.svg" alt="logo" className="h-14" />
+              <Link className="flex gap-5  justify-center w-full" to="/">
                 <p className="font-poppins text-xl flex items-center font-bold">
-                  <span className="text-yellow-500">Solo Unit</span> X
+                  <span className="text-sky-500">Denta</span> Ease
                 </p>
               </Link>
             </div>
@@ -73,14 +72,14 @@ const Sidebar = () => {
                   icon={FaRegUser}
                 />
                 <MenuItem
-                  label="Manage Members"
-                  address="/dashboard/manageMembers"
-                  icon={FaUsers}
+                  label="Today Appointments"
+                  address="/dashboard/todayAppointments"
+                  icon={HiCalendar}
                 />
                 <MenuItem
-                  label="Make Announcement"
-                  address="/dashboard/makeAnnouncement"
-                  icon={MdOutlineAnnouncement}
+                  label="All Appointments"
+                  address="/dashboard/allAppointments"
+                  icon={FaUsers}
                 />
                 <MenuItem
                   label="Agreement Requests"
@@ -104,7 +103,7 @@ const Sidebar = () => {
 
           <Link
             to={"/"}
-            className="flex w-full items-center px-4 py-2 mt-5 text-gray-600 hover:bg-yellow-500   hover:text-white transition-colors duration-300 transform"
+            className="flex w-full items-center px-4 py-2 mt-5 text-gray-600 hover:bg-sky-500   hover:text-white transition-colors duration-300 transform"
           >
             <FaHome className="w-5 h-5" />
 

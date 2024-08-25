@@ -13,6 +13,16 @@ app.use(
 );
 app.use(express.json());
 
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster1.iq3jpr7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1`;
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
 async function run() {
   try {
     const database = client.db("Denta-Ease");
@@ -60,6 +70,48 @@ async function run() {
 
       const result = await appointmentCollection.insertOne(appointment);
       res.send(result);
+    });
+
+    app.get("/appointments", async (req, res) => {
+      try {
+        const appointments = await appointmentCollection.find({}).toArray();
+        res.send(appointments);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+        res.status(500).send({ message: "Error fetching appointments" });
+      }
+    });
+
+    // Get today's appointments
+    app.get("/appointments/today", async (req, res) => {
+      try {
+        const today = new Date();
+        const formattedToday = today.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          weekday: "long",
+        });
+
+        // Reformat to match the stored format in MongoDB
+        const formattedTodayMongo = `${formattedToday.split(", ")[1]} ${
+          formattedToday.split(", ")[0]
+        }`;
+
+        const todayAppointments = await appointmentCollection
+          .find({
+            date: formattedTodayMongo, // Match the stored date format in MongoDB
+          })
+          .toArray();
+
+        res.send(todayAppointments);
+      } catch (error) {
+        res
+          .status(500)
+          .send({
+            error: "An error occurred while fetching today's appointments",
+          });
+      }
     });
 
     // Send a ping to confirm a successful connection

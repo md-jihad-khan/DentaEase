@@ -2,6 +2,8 @@ import { useState } from "react";
 import DatePicker from "react-multi-date-picker";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import { TbFidgetSpinner } from "react-icons/tb";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const Appointment = () => {
   const [time, setTime] = useState(null);
@@ -16,11 +18,42 @@ const Appointment = () => {
     const email = e.target.email.value;
     const phone = e.target.phone.value;
     const comment = e.target.comment.value;
-    const formattedDate = date ? date.format("DD/MM/YYYY") : ""; // Format the date
+    const formattedDate = date ? date.format("DD/MM/YYYY dddd") : ""; // Format the date
     const formattedTime = time ? time.format("hh:mm A") : ""; // Format the time
 
-    setLoading(false);
-    console.log(name, email, phone, comment, formattedDate, formattedTime);
+    const appointmentData = {
+      name,
+      email,
+      phone,
+      comment,
+      date: formattedDate,
+      time: formattedTime,
+    };
+
+    axios
+      .post(`${import.meta.env.VITE_SERVER}/appointments`, appointmentData)
+      .then((res) => {
+        setLoading(false);
+        if (res.data.insertedId) {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Appointment Booked Successfully",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+        e.target.reset();
+      })
+      .catch((error) => {
+        console.error("An error occurred:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "An error occurred while booking the appointment. Please try again later.",
+        });
+        setLoading(false);
+      });
   };
 
   return (
@@ -84,8 +117,9 @@ const Appointment = () => {
                 </label>
                 <DatePicker
                   placeholder="Select The Date"
+                  required
                   inputClass="input w-full text-gray-800 border-sky-500  border "
-                  format="dd/mm/YY/dddd"
+                  format="DD/MM/YYYY dddd"
                   onChange={(date) => {
                     setDate(date);
                   }}
@@ -97,6 +131,7 @@ const Appointment = () => {
                   <span className="label-text">Appointment Time</span>
                 </label>
                 <DatePicker
+                  required
                   inputClass="input w-full text-gray-800 border-sky-500  border "
                   placeholder="Select The Time"
                   disableDayPicker
