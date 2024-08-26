@@ -1,14 +1,9 @@
 import { Link } from "react-router-dom";
-
-import { GrLogout } from "react-icons/gr";
 import { TbCalendarCancel } from "react-icons/tb";
-import { HiOutlineSpeakerphone } from "react-icons/hi";
 import { FaFileSignature, FaHome, FaRegUser, FaUsers } from "react-icons/fa";
 import { RiCoupon3Fill } from "react-icons/ri";
-import { BsCashCoin } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
-import { MdOutlineAnnouncement } from "react-icons/md";
 import { AiOutlineBars } from "react-icons/ai";
+import { IoIosPeople } from "react-icons/io";
 import { HiCalendar } from "react-icons/hi";
 
 import MenuItem from "./MenuItem";
@@ -68,7 +63,7 @@ const Sidebar = () => {
             <nav>
               <>
                 <MenuItem
-                  label="My Profile"
+                  label="Profile"
                   address="/dashboard"
                   icon={FaRegUser}
                 />
@@ -88,14 +83,9 @@ const Sidebar = () => {
                   icon={TbCalendarCancel}
                 />
                 <MenuItem
-                  label="Agreement Requests"
-                  address="/dashboard/agreementRequest"
-                  icon={FaFileSignature}
-                />
-                <MenuItem
-                  label="Manage Coupons"
-                  address="/dashboard/manageCoupons"
-                  icon={RiCoupon3Fill}
+                  label="All Patients"
+                  address="/dashboard/allPatients"
+                  icon={IoIosPeople}
                 />
               </>
             </nav>

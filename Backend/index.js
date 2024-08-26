@@ -4,7 +4,6 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const schedule = require("node-schedule");
-const cron = require("node-cron");
 const moment = require("moment");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
@@ -59,6 +58,7 @@ async function run() {
     const database = client.db("Denta-Ease");
     const appointmentCollection = database.collection("appointments");
     const blockedCollection = database.collection("blockedDates");
+    const patientsCollection = database.collection("patients");
 
     // // jwt
     // app.post("/jwt", async (req, res) => {
@@ -95,6 +95,61 @@ async function run() {
     //   next();
     // };
     // verify member middleware
+
+    app.get("/patients", async (req, res) => {
+      try {
+        const patients = await patientsCollection.find().toArray();
+        res.send(patients);
+      } catch (error) {
+        res.status(500).send({ error: "Failed to fetch patients" });
+      }
+    });
+
+    app.post("/patients", async (req, res) => {
+      try {
+        const patient = req.body;
+        const result = await patientsCollection.insertOne(patient);
+        res.status(201).send(result);
+      } catch (error) {
+        res.status(500).send({ error: "Failed to add patient" });
+      }
+    });
+
+    app.delete("/patients/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const result = await patientsCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+
+        if (result.deletedCount === 0) {
+          res.status(404).send({ error: "Patient not found" });
+        } else {
+          res.send(result);
+        }
+      } catch (error) {
+        res.status(500).send({ error: "Failed to delete patient" });
+      }
+    });
+
+    app.put("/patients/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const result = await patientsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updateData }
+        );
+
+        if (result.matchedCount === 0) {
+          res.status(404).send({ error: "Patient not found" });
+        } else {
+          res.send(result);
+        }
+      } catch (error) {
+        res.status(500).send({ error: "Failed to update patient" });
+      }
+    });
 
     // upload Appointments
     app.post("/appointments", async (req, res) => {
