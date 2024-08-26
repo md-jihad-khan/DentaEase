@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import { RiDeleteBin3Fill } from "react-icons/ri";
 
 const AllPatients = () => {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const handlePaginationButton = (value) => {
+    setCurrentPage(value);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value);
+  };
 
   const fetchPatients = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_SERVER}/patients`
+        `${
+          import.meta.env.VITE_SERVER
+        }/patients?page=${currentPage}&search=${search}`
       );
-      setPatients(response.data);
+      setPatients(response.data.patients);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error("Error fetching patients:", error);
     }
@@ -20,7 +35,7 @@ const AllPatients = () => {
 
   useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [currentPage, search]);
 
   const handleAddPatient = async (event) => {
     event.preventDefault();
@@ -87,17 +102,51 @@ const AllPatients = () => {
     }
   };
 
+  const MAX_VISIBLE_PAGES = 8;
+  const halfMaxPages = Math.floor(MAX_VISIBLE_PAGES / 2);
+
+  // Calculate the start page
+  let startPage = Math.max(1, currentPage - halfMaxPages);
+
+  // Calculate the end page
+  let endPage = startPage + MAX_VISIBLE_PAGES - 1;
+
+  // If the endPage exceeds the totalPages, adjust the startPage and endPage
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, endPage - MAX_VISIBLE_PAGES + 1);
+  }
+
   return (
     <div>
-      <button
-        className="btn"
-        onClick={() => {
-          setSelectedPatient(null);
-          document.getElementById("add_patient_modal").showModal();
-        }}
-      >
-        Add Patient <FaPlus />
-      </button>
+      <div>
+        <form onSubmit={handleSearch} className="w-full md:w-1/2 mx-auto px-2">
+          <label className="flex items-center border-r-0 pr-0">
+            <input
+              type="text"
+              name="search"
+              className="w-full input focus:outline-none border border-gray-300 rounded-full rounded-r-none"
+              placeholder="Enter the name or email"
+            />
+            <button
+              type="submit"
+              className="btn-square rounded-r-full px-10 bg-sky-500 text-white"
+            >
+              <FaSearch />
+            </button>
+          </label>
+        </form>
+
+        <button
+          className="btn"
+          onClick={() => {
+            setSelectedPatient(null);
+            document.getElementById("add_patient_modal").showModal();
+          }}
+        >
+          Add Patient <FaPlus />
+        </button>
+      </div>
 
       <dialog id="add_patient_modal" className="modal">
         <div className="modal-box">
@@ -191,6 +240,73 @@ const AllPatients = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="pagination">
+        <div className="flex justify-center mt-12">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => handlePaginationButton(currentPage - 1)}
+            className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-sky-500 hover:text-white"
+          >
+            <div className="flex items-center -mx-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-1 rtl:-scale-x-100"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                />
+              </svg>
+              <span className="mx-1">previous</span>
+            </div>
+          </button>
+
+          {Array.from(
+            { length: endPage - startPage + 1 },
+            (_, idx) => startPage + idx
+          ).map((btnNum) => (
+            <button
+              onClick={() => handlePaginationButton(btnNum)}
+              key={btnNum}
+              className={`hidden ${
+                currentPage === btnNum ? "bg-sky-500 text-white" : ""
+              } px-4 py-2 mx-1 transition-colors duration-300 transform rounded-md sm:inline hover:bg-sky-500 hover:text-white`}
+            >
+              {btnNum}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => handlePaginationButton(currentPage + 1)}
+            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-sky-500 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500"
+          >
+            <div className="flex items-center -mx-1">
+              <span className="mx-1">Next</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-1 rtl:-scale-x-100"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );

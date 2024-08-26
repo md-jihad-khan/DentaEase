@@ -97,11 +97,36 @@ async function run() {
     // verify member middleware
 
     app.get("/patients", async (req, res) => {
+      const page = parseInt(req.query.page) || 1;
+      const limit = 10;
+      const skip = (page - 1) * limit;
+      const search = req.query.search || "";
+
+      let query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
       try {
-        const patients = await patientsCollection.find().toArray();
-        res.send(patients);
+        const patients = await patientsCollection
+          .find(query)
+          .skip(skip)
+          .sort({ _id: -1 })
+          .limit(limit)
+          .toArray();
+
+        const total = await patientsCollection.countDocuments(query);
+
+        res.send({
+          patients,
+          total,
+          totalPages: Math.ceil(total / limit),
+          currentPage: page,
+        });
       } catch (error) {
-        res.status(500).send({ error: "Failed to fetch patients" });
+        console.error("Error fetching appointments:", error);
+        res.status(500).send({ message: "Error fetching appointments" });
       }
     });
 
