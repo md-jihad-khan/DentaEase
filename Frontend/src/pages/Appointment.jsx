@@ -11,7 +11,7 @@ const Appointment = () => {
   const [date, setDate] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -23,9 +23,7 @@ const Appointment = () => {
     const formattedTime = time ? time.format("hh:mm A") : ""; // Format the time
 
     const parts = formattedDate.split(" ");
-
-    // The last part is the day of the week
-    const day = parts[parts.length - 1];
+    const day = parts[parts.length - 1]; // The last part is the day of the week
 
     const appointmentData = {
       name,
@@ -37,30 +35,63 @@ const Appointment = () => {
       day,
     };
 
-    axios
-      .post(`${import.meta.env.VITE_SERVER}/appointments`, appointmentData)
-      .then((res) => {
-        setLoading(false);
-        if (res.data.insertedId) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Appointment Booked Successfully",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-        e.target.reset();
-      })
-      .catch((error) => {
-        console.error("An error occurred:", error);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER}/appointments`,
+        appointmentData
+      );
+      setLoading(false);
+      if (response.data.insertedId) {
         Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "An error occurred while booking the appointment. Please try again later.",
+          icon: "success",
+          title: "Success",
+          text: "Appointment Booked Successfully",
+          showConfirmButton: false,
+          timer: 1500,
         });
-        setLoading(false);
+      }
+      e.target.reset();
+    } catch (error) {
+      setLoading(false);
+
+      const {
+        error: errorMsg,
+        message,
+        blockedTimes,
+      } = error.response?.data || {};
+
+      const errorMessage = errorMsg || "An error occurred. Please try again.";
+      let detailedMessage = message || "";
+
+      // Helper function to format time with AM/PM
+      const formatTime = (timeStr) => {
+        const [hours, minutes] = timeStr.split(":").map(Number);
+        const period = hours >= 12 ? "PM" : "AM";
+        const formattedHours = (((hours + 11) % 12) + 1)
+          .toString()
+          .padStart(2, "0");
+        const formattedMinutes = minutes.toString().padStart(2, "0");
+        return `${formattedHours}:${formattedMinutes} ${period}`;
+      };
+
+      // Handle blocked times and include details about time ranges
+      if (blockedTimes && blockedTimes.length > 0) {
+        detailedMessage += "\nClosed";
+        blockedTimes.forEach(({ startTime, endTime }) => {
+          if (startTime && endTime) {
+            const formattedStartTime = formatTime(startTime);
+            const formattedEndTime = formatTime(endTime);
+            detailedMessage += `\n Time Range: ${formattedStartTime} to ${formattedEndTime} please add appointment before or after this time`;
+          }
+        });
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: detailedMessage || errorMessage,
       });
+    }
   };
 
   return (

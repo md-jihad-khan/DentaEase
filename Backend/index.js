@@ -162,13 +162,14 @@ async function run() {
       };
 
       const appointmentTimeMinutes = timeToMinutes(time);
-
       const appointmentDate = date;
       const appointmentDayOfWeek = day;
 
       const blockedEntries = await blockedCollection.find().toArray();
 
       let isBlocked = false;
+      let blockReason = "";
+      let blockedTimes = [];
 
       for (const entry of blockedEntries) {
         const {
@@ -189,7 +190,6 @@ async function run() {
 
         const isDateBlocked = blockedDate && blockedDate === date;
         const isDayBlocked = blockedDay && blockedDay === appointmentDayOfWeek;
-
         const isTimeRangeBlockedForAll =
           !blockedDate &&
           !blockedDay &&
@@ -206,17 +206,49 @@ async function run() {
             isTimeBlocked
           ) {
             isBlocked = true;
+            blockedTimes.push({
+              startTime: blockedStartMinutes,
+              endTime: blockedEndMinutes,
+              date: blockedDate,
+              day: blockedDay,
+            });
+
+            if (isDateBlocked) {
+              blockReason = `The selected time ${time} on ${date} is Closed for appointment.`;
+            } else if (isDayBlocked) {
+              blockReason = `The selected time ${time} on ${day} is closed for appointment.`;
+            } else if (isTimeRangeBlockedForAll) {
+              blockReason = `The selected time ${time} is closed for appointment.`;
+            }
             break;
           }
         } else if (isDateBlocked || isDayBlocked) {
           isBlocked = true;
+          if (isDateBlocked) {
+            blockReason = `The selected date ${date} is closed for appointments.`;
+          } else if (isDayBlocked) {
+            blockReason = `Appointments are closed in ${day}.`;
+          }
           break;
         }
       }
 
       if (isBlocked) {
         return res.status(400).send({
-          error: "Selected date/time/day is blocked for appointments",
+          error: "Unable to book appointment",
+          message: blockReason,
+          blockedTimes: blockedTimes.map(
+            ({ startTime, endTime, date, day }) => ({
+              startTime: startTime
+                ? new Date(startTime * 60 * 1000).toISOString().substr(11, 5)
+                : "N/A",
+              endTime: endTime
+                ? new Date(endTime * 60 * 1000).toISOString().substr(11, 5)
+                : "N/A",
+              date: date || "N/A",
+              day: day || "N/A",
+            })
+          ),
         });
       }
 

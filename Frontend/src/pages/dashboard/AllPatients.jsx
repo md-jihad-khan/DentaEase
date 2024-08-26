@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { RiDeleteBin3Fill } from "react-icons/ri";
 
 const AllPatients = () => {
   const [patients, setPatients] = useState([]);
@@ -94,7 +96,7 @@ const AllPatients = () => {
           document.getElementById("add_patient_modal").showModal();
         }}
       >
-        Add Patient
+        Add Patient <FaPlus />
       </button>
 
       <dialog id="add_patient_modal" className="modal">
@@ -172,18 +174,18 @@ const AllPatients = () => {
               <p>Email: {patient.email}</p>
               <p>Phone: {patient.phone}</p>
               <p>Comment: {patient.comment}</p>
-              <div className="card-actions justify-end">
+              <div className="card-actions justify-between mt-5">
                 <button
                   onClick={() => handleEditPatient(patient)}
-                  className="btn btn-secondary"
+                  className="btn bg-sky-400 text-white"
                 >
-                  Edit
+                  Edit <FaEdit />
                 </button>
                 <button
                   onClick={() => handleDeletePatient(patient._id)}
-                  className="btn btn-error"
+                  className="btn bg-red-500 text-white"
                 >
-                  Delete
+                  Delete <RiDeleteBin3Fill />
                 </button>
               </div>
             </div>
