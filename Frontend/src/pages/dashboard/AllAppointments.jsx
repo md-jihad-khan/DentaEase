@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { FaSearch } from "react-icons/fa";
 
 const AllAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -8,16 +9,26 @@ const AllAppointments = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
 
   const handlePaginationButton = (value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value);
   };
 
   useEffect(() => {
     // Function to fetch appointments from the API
     const fetchAppointments = () => {
       axios
-        .get(`${import.meta.env.VITE_SERVER}/appointments?page=${currentPage}`)
+        .get(
+          `${
+            import.meta.env.VITE_SERVER
+          }/appointments?page=${currentPage}&search=${search}`
+        )
         .then((res) => {
           setAppointments(res.data.appointments);
           setTotalPages(res.data.totalPages);
@@ -36,7 +47,7 @@ const AllAppointments = () => {
     };
 
     fetchAppointments();
-  }, [currentPage]);
+  }, [currentPage, search]);
 
   const MAX_VISIBLE_PAGES = 8;
   const halfMaxPages = Math.floor(MAX_VISIBLE_PAGES / 2);
@@ -59,6 +70,24 @@ const AllAppointments = () => {
   return (
     <div>
       <h3 className="text-3xl font-bold text-center my-5">Appointments</h3>
+
+      <form onSubmit={handleSearch} className="w-full md:w-1/2 mx-auto px-2">
+        <label className="flex items-center border-r-0 pr-0">
+          <input
+            type="text"
+            name="search"
+            className="w-full input focus:outline-none border border-gray-300 rounded-full rounded-r-none"
+            placeholder="Enter the name or email"
+          />
+          <button
+            type="submit"
+            className="btn-square rounded-r-full px-10 bg-sky-500 text-white"
+          >
+            <FaSearch />
+          </button>
+        </label>
+      </form>
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

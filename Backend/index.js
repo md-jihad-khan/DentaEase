@@ -165,17 +165,25 @@ async function run() {
 
     app.get("/appointments", async (req, res) => {
       const page = parseInt(req.query.page) || 1;
-      const limit = 1;
+      const limit = 10;
       const skip = (page - 1) * limit;
+      const search = req.query.search || "";
 
+      let query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      };
       try {
         const appointments = await appointmentCollection
-          .find({})
+          .find(query)
           .skip(skip)
+          .sort({ _id: -1 })
           .limit(limit)
           .toArray();
 
-        const total = await appointmentCollection.countDocuments();
+        const total = await appointmentCollection.countDocuments(query);
 
         res.send({
           appointments,
