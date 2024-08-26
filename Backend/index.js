@@ -2,6 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const schedule = require("node-schedule");
+const cron = require("node-cron");
+const moment = require("moment");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
@@ -22,6 +26,33 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+// Setup Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: "smtp.ethereal.email",
+  port: 587,
+  auth: {
+    user: "arne35@ethereal.email",
+    pass: "gTMfHzP1TSyA6X5wJ2",
+  },
+});
+
+function scheduleReminderEmail(name, email, date, time) {
+  const appointmentMoment = moment(`${date} ${time}`, "DD/MM/YYYY hh:mm A");
+  const reminderMoment = appointmentMoment.subtract(1, "hour");
+
+  // Schedule the reminder email
+  schedule.scheduleJob(reminderMoment.toDate(), () => {
+    const mailOptions = {
+      from: "your-email@gmail.com",
+      to: email,
+      subject: "Appointment Reminder",
+      text: `Dear ${name}, this is a reminder for your appointment at ${time} on ${date}.`,
+    };
+
+    transporter.sendMail(mailOptions);
+  });
+}
 
 async function run() {
   try {
@@ -67,100 +98,90 @@ async function run() {
 
     // upload Appointments
     app.post("/appointments", async (req, res) => {
-      try {
-        const { date, time, day } = req.body;
+      const { name, email, date, time, day } = req.body;
 
-        const timeToMinutes = (timeStr) => {
-          const [time, period] = timeStr.split(" ");
-          const [hours, minutes] = time.split(":").map(Number);
-          return ((hours % 12) + (period === "PM" ? 12 : 0)) * 60 + minutes;
-        };
+      const timeToMinutes = (timeStr) => {
+        const [time, period] = timeStr.split(" ");
+        const [hours, minutes] = time.split(":").map(Number);
+        return ((hours % 12) + (period === "PM" ? 12 : 0)) * 60 + minutes;
+      };
 
-        // Convert the appointment time to minutes since midnight
-        const appointmentTimeMinutes = timeToMinutes(time);
+      const appointmentTimeMinutes = timeToMinutes(time);
 
-        const appointmentDate = date;
-        const appointmentDayOfWeek = day;
+      const appointmentDate = date;
+      const appointmentDayOfWeek = day;
 
-        // Retrieve all blocked entries from the database
-        const blockedEntries = await blockedCollection.find().toArray();
+      const blockedEntries = await blockedCollection.find().toArray();
 
-        let isBlocked = false;
+      let isBlocked = false;
 
-        for (const entry of blockedEntries) {
-          const {
-            date: blockedDate,
-            day: blockedDay,
-            startTime,
-            endTime,
-          } = entry;
+      for (const entry of blockedEntries) {
+        const {
+          date: blockedDate,
+          day: blockedDay,
+          startTime,
+          endTime,
+        } = entry;
 
-          // Extract day of week from blockedDate if available
-          const blockedDayOfWeek = blockedDate
-            ? new Date(blockedDate).toLocaleDateString("en-US", {
-                weekday: "long",
-              })
-            : "";
+        const blockedDayOfWeek = blockedDate
+          ? new Date(blockedDate).toLocaleDateString("en-US", {
+              weekday: "long",
+            })
+          : "";
 
-          // Convert blocked start and end times to minutes since midnight
-          const blockedStartMinutes = startTime
-            ? timeToMinutes(startTime)
-            : null;
-          const blockedEndMinutes = endTime ? timeToMinutes(endTime) : null;
+        const blockedStartMinutes = startTime ? timeToMinutes(startTime) : null;
+        const blockedEndMinutes = endTime ? timeToMinutes(endTime) : null;
 
-          // Check if the appointment date or day is blocked
-          const isDateBlocked = blockedDate && blockedDate === date;
-          const isDayBlocked =
-            blockedDay && blockedDay === appointmentDayOfWeek;
+        const isDateBlocked = blockedDate && blockedDate === date;
+        const isDayBlocked = blockedDay && blockedDay === appointmentDayOfWeek;
 
-          // Check if the blocked entry contains only a time range (no specific date or day)
-          const isTimeRangeBlockedForAll =
-            !blockedDate &&
-            !blockedDay &&
-            blockedStartMinutes !== null &&
-            blockedEndMinutes !== null;
+        const isTimeRangeBlockedForAll =
+          !blockedDate &&
+          !blockedDay &&
+          blockedStartMinutes !== null &&
+          blockedEndMinutes !== null;
 
-          if (blockedStartMinutes !== null && blockedEndMinutes !== null) {
-            // Check if the appointment time falls within the blocked time range
-            const isTimeBlocked =
-              appointmentTimeMinutes >= blockedStartMinutes &&
-              appointmentTimeMinutes <= blockedEndMinutes;
+        if (blockedStartMinutes !== null && blockedEndMinutes !== null) {
+          const isTimeBlocked =
+            appointmentTimeMinutes >= blockedStartMinutes &&
+            appointmentTimeMinutes <= blockedEndMinutes;
 
-            // Block if date or day matches and time is blocked, or if time range is blocked for all dates
-            if (
-              (isDateBlocked || isDayBlocked || isTimeRangeBlockedForAll) &&
-              isTimeBlocked
-            ) {
-              isBlocked = true;
-              break;
-            }
-          } else if (isDateBlocked || isDayBlocked) {
-            // Blocked entry without time ranges but with date or day
+          if (
+            (isDateBlocked || isDayBlocked || isTimeRangeBlockedForAll) &&
+            isTimeBlocked
+          ) {
             isBlocked = true;
             break;
           }
+        } else if (isDateBlocked || isDayBlocked) {
+          isBlocked = true;
+          break;
         }
-
-        // const isBlocked = await blockedCollection.findOne({
-        //   $or: [
-        //     { date }, // Specific date blocked
-        //     { time }, // Specific time blocked
-        //     { day }, // Specific day of the week blocked
-        //   ],
-        // });
-
-        if (isBlocked) {
-          return res.status(400).send({
-            error: "Selected date/time/day is blocked for appointments",
-          });
-        }
-
-        // If not blocked, proceed with booking the appointment
-        const result = await appointmentCollection.insertOne(req.body);
-        res.send(result);
-      } catch (error) {
-        res.status(500).send({ error: "Failed to book appointment" });
       }
+
+      if (isBlocked) {
+        return res.status(400).send({
+          error: "Selected date/time/day is blocked for appointments",
+        });
+      }
+
+      // If not blocked, proceed with booking the appointment
+      const result = await appointmentCollection.insertOne(req.body);
+
+      // Send confirmation email
+      const mailOptions = {
+        from: "your-email@gmail.com",
+        to: email,
+        subject: "Appointment Confirmation",
+        text: `Dear ${name}, your appointment is confirmed for ${time} on ${date}.`,
+      };
+
+      transporter.sendMail(mailOptions);
+
+      // Schedule reminder email
+      scheduleReminderEmail(name, email, date, time);
+
+      res.send(result);
     });
 
     app.get("/appointments", async (req, res) => {
