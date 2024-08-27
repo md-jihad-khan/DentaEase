@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TodayAppointments = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,8 +12,8 @@ const TodayAppointments = () => {
   useEffect(() => {
     // Function to fetch today's appointments from the API
     const fetchTodayAppointments = () => {
-      axios
-        .get(`${import.meta.env.VITE_SERVER}/appointments/today`)
+      axiosSecure
+        .get(`/appointments/today`)
         .then((res) => {
           setAppointments(res.data);
           setLoading(false);
@@ -39,43 +41,20 @@ const TodayAppointments = () => {
       <h3 className="text-3xl font-bold text-center my-5">
         Today's Appointments {appointments?.length}
       </h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Patient Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Time
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Comment
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {appointments.map((appointment) => (
-              <tr key={appointment._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {appointment.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {appointment.date}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {appointment.time}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {appointment.comment}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {appointments.map((appointment) => (
+          <div
+            key={appointment._id}
+            className="card bg-sky-500 text-white shadow-lg"
+          >
+            <div className="card-body">
+              <h2 className="card-title">{appointment.name}</h2>
+              <p className="text-sm">Date: {appointment.date}</p>
+              <p className="text-sm">Time: {appointment.time}</p>
+              <p className="text-sm">Comment: {appointment.comment}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

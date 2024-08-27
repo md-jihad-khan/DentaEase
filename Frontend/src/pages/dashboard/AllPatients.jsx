@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import { RiDeleteBin3Fill } from "react-icons/ri";
+import { MdPerson } from "react-icons/md";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AllPatients = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,10 +24,9 @@ const AllPatients = () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_SERVER
-        }/patients?page=${currentPage}&search=${search}`
+      const response = await axiosSecure.get(
+        `/patients?page=${currentPage}&search=${search}`,
+        { withCredentials: true }
       );
       setPatients(response.data.patients);
       setTotalPages(response.data.totalPages);
@@ -48,10 +50,7 @@ const AllPatients = () => {
     const newPatient = { name, email, phone, comment };
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_SERVER}/patients`,
-        newPatient
-      );
+      const response = await axiosSecure.post(`/patients`, newPatient);
       console.log("Added patient:", response.data); // Debugging log
       fetchPatients();
       form.reset(); // Reset the form after successful submission
@@ -63,9 +62,7 @@ const AllPatients = () => {
 
   const handleDeletePatient = async (id) => {
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_SERVER}/patients/${id}`
-      );
+      const response = await axiosSecure.delete(`/patients/${id}`);
       console.log("Deleted patient:", response.data); // Debugging log
       fetchPatients();
     } catch (error) {
@@ -89,8 +86,8 @@ const AllPatients = () => {
     const updatedPatient = { name, email, phone, comment };
 
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_SERVER}/patients/${selectedPatient._id}`,
+      const response = await axiosSecure.put(
+        `/patients/${selectedPatient._id}`,
         updatedPatient
       );
       console.log("Updated patient:", response.data); // Debugging log
@@ -119,7 +116,7 @@ const AllPatients = () => {
 
   return (
     <div>
-      <div>
+      <div className="flex ">
         <form onSubmit={handleSearch} className="w-full md:w-1/2 mx-auto px-2">
           <label className="flex items-center border-r-0 pr-0">
             <input
@@ -217,8 +214,12 @@ const AllPatients = () => {
 
       <div className="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {patients.map((patient, index) => (
-          <div key={index} className="card w-full bg-base-100 shadow-xl">
+          <div key={index} className="card w-full bg-base-100 shadow-xl border">
             <div className="card-body">
+              <p className="flex justify-center">
+                <MdPerson className=" w-10 h-10 rounded-full  text-sky-500 " />
+              </p>
+
               <h2 className="card-title">{patient.name}</h2>
               <p>Email: {patient.email}</p>
               <p>Phone: {patient.phone}</p>

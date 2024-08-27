@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-multi-date-picker";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
-import axios from "axios";
 import Swal from "sweetalert2";
 import "react-multi-date-picker/styles/layouts/mobile.css";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const BlockAppointmentDates = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [blockedDates, setBlockedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDay, setSelectedDay] = useState("");
@@ -15,8 +17,8 @@ const BlockAppointmentDates = () => {
 
   useEffect(() => {
     // Fetch blocked dates, times, and days from the server
-    axios
-      .get(`${import.meta.env.VITE_SERVER}/blocked-dates`)
+    axiosSecure
+      .get(`/blocked-dates`)
       .then((res) => setBlockedDates(res.data))
       .catch((error) => console.error("Error fetching blocked dates:", error));
   }, [loading]);
@@ -32,8 +34,8 @@ const BlockAppointmentDates = () => {
       endTime: endTime ? endTime.format("hh:mm A") : null,
     };
 
-    axios
-      .post(`${import.meta.env.VITE_SERVER}/block-date`, blockData)
+    axiosSecure
+      .post(`/block-date`, blockData)
       .then((res) => {
         setLoading(false);
         setBlockedDates([...blockedDates, res.data]);
@@ -57,8 +59,8 @@ const BlockAppointmentDates = () => {
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(`${import.meta.env.VITE_SERVER}/blocked-dates/${id}`)
+    axiosSecure
+      .delete(`/blocked-dates/${id}`)
       .then((res) => {
         setBlockedDates(blockedDates.filter((date) => date._id !== id));
         Swal.fire({
