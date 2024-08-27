@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 const schedule = require("node-schedule");
 const moment = require("moment");
@@ -12,9 +13,12 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: process.env.CLIENT,
+    credentials: true,
   })
 );
 app.use(express.json());
+// Use cookie-parser middleware
+app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster1.iq3jpr7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1`;
 
@@ -60,43 +64,45 @@ async function run() {
     const blockedCollection = database.collection("blockedDates");
     const patientsCollection = database.collection("patients");
 
-    // // jwt
-    // app.post("/jwt", async (req, res) => {
-    //   const user = req.body;
-    //   const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    //     expiresIn: "6h",
-    //   });
-    //   res.send({ token });
-    // });
+    // jwt
+    app.post("/jwt", async (req, res) => {
+      const { email, password } = req.body;
+      if (
+        email === process.env.ADMIN_EMAIL &&
+        password === process.env.ADMIN_PASSWORD
+      ) {
+        const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: "6h",
+        });
+        res.send({ token });
+      } else {
+        res.status(401).send({ message: "Invalid email or password" });
+      }
+    });
 
-    // // middlewares
-    // const verifyToken = (req, res, next) => {
-    //   if (!req.headers.authorization) {
-    //     return res.status(401).send({ message: "unauthorized access" });
-    //   }
-    //   const token = req.headers.authorization.split(" ")[1];
-    //   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    //     if (err) {
-    //       return res.status(401).send({ message: "unauthorized access" });
-    //     }
-    //     req.user = decoded;
-    //     next();
-    //   });
-    // };
+    // middlewares
+    const verifyAdminAccess = (req, res, next) => {
+      const token = req.cookies.admin_token; // Get token from cookies
+      if (!token) {
+        return res.status(401).send({ message: "Unauthorized access" });
+      }
 
-    // const verifyAdmin = async (req, res, next) => {
-    //   const user = req.user;
-    //   const query = { email: user?.email };
-    //   const result = await userCollection.findOne(query);
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+          return res.status(401).send({ message: "Unauthorized access" });
+        }
 
-    //   if (!result || result?.role !== "admin")
-    //     return res.status(401).send({ message: "unauthorized access!!" });
+        const email = decoded.email;
+        if (email !== process.env.ADMIN_EMAIL) {
+          return res.status(401).send({ message: "Unauthorized access!!" });
+        }
 
-    //   next();
-    // };
-    // verify member middleware
+        req.user = decoded;
+        next();
+      });
+    };
 
-    app.get("/patients", async (req, res) => {
+    app.get("/patients", verifyAdminAccess, async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = 10;
       const skip = (page - 1) * limit;

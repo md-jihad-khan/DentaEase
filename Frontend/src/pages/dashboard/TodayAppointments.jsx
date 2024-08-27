@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TodayAppointments = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,8 +12,8 @@ const TodayAppointments = () => {
   useEffect(() => {
     // Function to fetch today's appointments from the API
     const fetchTodayAppointments = () => {
-      axios
-        .get(`${import.meta.env.VITE_SERVER}/appointments/today`)
+      axiosSecure
+        .get(`/appointments/today`)
         .then((res) => {
           setAppointments(res.data);
           setLoading(false);

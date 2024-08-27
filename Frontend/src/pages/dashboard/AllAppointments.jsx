@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSearch } from "react-icons/fa";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AllAppointments = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,12 +25,8 @@ const AllAppointments = () => {
   useEffect(() => {
     // Function to fetch appointments from the API
     const fetchAppointments = () => {
-      axios
-        .get(
-          `${
-            import.meta.env.VITE_SERVER
-          }/appointments?page=${currentPage}&search=${search}`
-        )
+      axiosSecure
+        .get(`/appointments?page=${currentPage}&search=${search}`)
         .then((res) => {
           setAppointments(res.data.appointments);
           setTotalPages(res.data.totalPages);

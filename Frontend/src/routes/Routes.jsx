@@ -6,6 +6,8 @@ import AllAppointments from "../pages/dashboard/AllAppointments";
 import TodayAppointments from "../pages/dashboard/TodayAppointments";
 import BlockAppointmentDates from "../pages/dashboard/BlockAppointmentDates";
 import AllPatients from "../pages/dashboard/AllPatients";
+import AdminLogin from "../pages/AdminLogin";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -18,25 +20,50 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: "/adminLogin",
+    element: <AdminLogin />,
+  },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "allAppointments",
-        element: <AllAppointments />,
+        element: (
+          <ProtectedRoute>
+            <AllAppointments />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "todayAppointments",
-        element: <TodayAppointments />,
+        element: (
+          <ProtectedRoute>
+            <TodayAppointments />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "blockedDates",
-        element: <BlockAppointmentDates />,
+        element: (
+          <ProtectedRoute>
+            <BlockAppointmentDates />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "allPatients",
-        element: <AllPatients />,
+        element: (
+          <ProtectedRoute>
+            <AllPatients />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
