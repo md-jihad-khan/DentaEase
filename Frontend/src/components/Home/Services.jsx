@@ -9,7 +9,7 @@ const Services = () => {
   return (
     <section className="w-10/12 mx-auto">
       <h4 className="text-center text-5xl font-bold text-sky-500">
-        Our Services
+        Our <span className="text-black">Services</span>
       </h4>
       <p className=" text-center text-gray-600 font-thin text-sm mt-6 mb-10">
         Prevention is the foundation of a healthy smile. Our preventive dental
@@ -20,7 +20,7 @@ const Services = () => {
       </p>
 
       <div className="grid mx-5 gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-5">
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5">
             <img
               src={treatment}
@@ -37,7 +37,7 @@ const Services = () => {
             </p>
           </div>
         </div>
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5">
             <img
               src={cosmetic}
@@ -54,7 +54,7 @@ const Services = () => {
             </p>
           </div>
         </div>
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5">
             <img
               src={oral}
@@ -71,7 +71,7 @@ const Services = () => {
             </p>
           </div>
         </div>
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5 ">
             <img
               src={ortho}
@@ -88,7 +88,7 @@ const Services = () => {
             </p>
           </div>
         </div>
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5">
             <img
               src={surgery}
@@ -105,7 +105,7 @@ const Services = () => {
             </p>
           </div>
         </div>
-        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent shadow-lg">
+        <div className="card card-compact border border-sky-200  hover:scale-105 transition bg-gradient-to-t from-sky-100  via-sky-50  to-transparent ">
           <figure className="mt-5">
             <img
               src={implant}
