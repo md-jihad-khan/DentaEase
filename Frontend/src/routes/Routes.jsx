@@ -8,12 +8,17 @@ import BlockAppointmentDates from "../pages/dashboard/BlockAppointmentDates";
 import AllPatients from "../pages/dashboard/AllPatients";
 import AdminLogin from "../pages/AdminLogin";
 import ProtectedRoute from "./ProtectedRoute";
+import Home from "../pages/Home";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
     children: [
+      {
+        index: true,
+        element: <Home />,
+      },
       {
         path: "/appointment",
         element: <Appointment />,
