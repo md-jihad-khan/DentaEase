@@ -7,7 +7,7 @@ const Banner = () => {
       <div className="flex items-center justify-center flex-col-reverse md:flex-row w-10/12 mx-auto">
         <div className="md:w-1/2 mb-20 md:mt-20  md:p-10 p-4  space-y-5">
           <h3 className="font-bold text-3xl md:text-5xl lg:text-6xl">
-            <span className="text-sky-500">Consult</span>
+            <span className="text-sky-500">Consult </span>
             Your Dental Health Issue
           </h3>
 

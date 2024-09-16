@@ -7,7 +7,7 @@ const reviews = [
     name: "John Doe",
     img: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Excellent service! The team was professional and delivered exactly what I wanted. Highly recommend for anyone needing quality web development.",
+      "The best dental experience I've ever had! The staff was incredibly professional, and they made me feel comfortable throughout my entire visit. I highly recommend this clinic to anyone looking for top-notch dental care.",
     rating: 5,
     date: "2024-08-20",
   },
@@ -16,7 +16,7 @@ const reviews = [
     name: "Jane Smith",
     img: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600",
     review:
-      "Great experience working with this developer. They were very responsive and made sure everything was perfect. The end result exceeded my expectations.",
+      "I had a wonderful experience at this dental office. The hygienist was very thorough, and the dentist provided great advice on how to improve my oral health. I'll definitely be returning.",
     rating: 4.8,
     date: "2024-08-15",
   },
@@ -25,7 +25,7 @@ const reviews = [
     name: "Emily Johnson",
     img: "https://images.pexels.com/photos/943084/pexels-photo-943084.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Fantastic work! The website is not only beautiful but also user-friendly. The team was easy to communicate with and delivered on time.",
+      "Amazing service! The clinic is clean, modern, and well-equipped. The dentist was friendly and explained everything in detail, which made me feel at ease. Highly recommend!",
     rating: 5,
     date: "2024-08-10",
   },
@@ -34,7 +34,7 @@ const reviews = [
     name: "Michael Brown",
     img: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Good job overall. The project was completed to my satisfaction, although there were some minor delays. I would still recommend them for their quality of work.",
+      "Good overall experience. The treatment was effective, and the staff was friendly, although the appointment took longer than expected. I would still recommend them for their quality care.",
     rating: 4.5,
     date: "2024-08-05",
   },
@@ -43,7 +43,7 @@ const reviews = [
     name: "Sophia Davis",
     img: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Amazing developer! They understood my needs perfectly and delivered a website that was exactly what I envisioned. Will definitely work with them again.",
+      "This dental clinic is outstanding! They understood my concerns and provided a treatment plan that fit my needs perfectly. I couldn't be happier with the results. Will definitely come back.",
     rating: 5,
     date: "2024-07-28",
   },
@@ -52,7 +52,7 @@ const reviews = [
     name: "Daniel Wilson",
     img: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "I'm very satisfied with the service. The website is fast, responsive, and looks great on all devices. Communication was clear and consistent throughout the project.",
+      "Very satisfied with my visit. The dentist was knowledgeable, and the entire staff was very welcoming. My teeth have never looked better!",
     rating: 4.9,
     date: "2024-07-22",
   },
@@ -61,7 +61,7 @@ const reviews = [
     name: "Olivia Martinez",
     img: "https://images.pexels.com/photos/1898555/pexels-photo-1898555.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "The developer was very knowledgeable and provided great suggestions to improve the project. The final product was delivered on time and exceeded my expectations.",
+      "The dentist was very skilled and offered great tips for maintaining my dental health. The clinic was clean, and the staff was friendly. The final results exceeded my expectations.",
     rating: 5,
     date: "2024-07-15",
   },
@@ -70,7 +70,7 @@ const reviews = [
     name: "James Anderson",
     img: "https://images.pexels.com/photos/1559486/pexels-photo-1559486.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "The service was okay, but I had some issues with the communication. The project turned out fine, but there was a bit of a learning curve to get what I wanted.",
+      "The service was decent, but I had some issues with the communication. The dental work turned out fine, but the process could have been smoother.",
     rating: 4.0,
     date: "2024-07-05",
   },
@@ -79,7 +79,7 @@ const reviews = [
     name: "Emma Lee",
     img: "https://images.pexels.com/photos/1853103/pexels-photo-1853103.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Outstanding work! The website looks amazing, and the process was smooth from start to finish. I highly recommend them for any web development needs.",
+      "Outstanding dental care! My teeth feel great, and the entire process was painless. I highly recommend this clinic to anyone in need of quality dental services.",
     rating: 5,
     date: "2024-06-30",
   },
@@ -88,7 +88,7 @@ const reviews = [
     name: "William Taylor",
     img: "https://images.pexels.com/photos/428364/pexels-photo-428364.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     review:
-      "Professional and efficient. The developer delivered exactly what I needed, and the project was completed ahead of schedule. Will hire again.",
+      "Professional and efficient. The dentist delivered exactly what I needed, and the treatment was completed ahead of schedule. Will return for future check-ups.",
     rating: 5,
     date: "2024-06-20",
   },
@@ -111,7 +111,7 @@ const ReviewCard = ({ name, review, rating, date, img }) => {
   };
 
   return (
-    <div className="p-4 border rounded shadow-md w-72 rounded-lg flex flex-col items-center border-sky-200">
+    <div className="p-4 border  shadow-md w-72 rounded-lg flex flex-col items-center border-sky-200">
       <img className="rounded-full w-20 h-20 object-cover" src={img} alt="" />
       <h3 className="text-lg font-bold">{name}</h3>
       <p className="text-sm text-gray-500">{date}</p>
@@ -144,7 +144,7 @@ const Reviews = () => {
             repeat: Infinity,
             ease: "linear",
             repeatType: "loop",
-            duration: 30,
+            duration: 35,
           }}
         >
           {reviews.map((review) => (
