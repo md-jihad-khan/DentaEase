@@ -18,7 +18,7 @@ const AboutUs = () => {
           />
         </div>
         {/* content */}
-        <div className="md:w-1/2 ml-3 md:ml-10 space-y-3 lg:space-y-5 xl:space-y-10">
+        <div className="md:w-1/2 ml-3 md:ml-10 space-y-4 lg:space-y-5 xl:space-y-10">
           <h4 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-sky-500 mt-5 md:mt-0">
             About <span className="text-black">Us</span>
           </h4>
@@ -31,7 +31,7 @@ const AboutUs = () => {
             treatments. With dental practices throughout the world.
           </p>
 
-          <div className="flex flex-col gap-3 md:flex-row border-t h-32 border-b justify-between ">
+          <div className="flex flex-col gap-3 md:flex-row border-t md:h-32 border-b justify-between ">
             <div className="flex gap-5 items-center">
               <CountUp
                 duration={2.75}
