@@ -9,13 +9,13 @@ import { motion } from "framer-motion";
 const Faq = () => {
   return (
     <section className="my-10 mt-20 md:w-11/12 mx-auto">
-      <div className="flex flex-col md:flex-row items-center justify-between">
+      <div className="flex flex-col-reverse  md:flex-row items-center justify-between">
         {/* content */}
         <div className="md:w-1/2 ml-3 md:ml-10 space-y-4 lg:space-y-5 xl:space-y-10">
           <h4 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-sky-500 mt-5 md:mt-0">
             How it <span className="text-black">work</span>
           </h4>
-          <h3 className="text-3xl lg:text-4xl xl:text-5xl font-bold">
+          <h3 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
             Understanding the patient journey
           </h3>
 
@@ -57,25 +57,28 @@ const Faq = () => {
               </div>
             </div>
           </div>
-
-          <motion.div
-            className="bg-white  rounded-xl p-4 inline-flex items-center gap-4"
-            animate={{
-              x: [0, 15, 0], // Moves to 20px right and then back to 0px
-            }}
-            transition={{
-              duration: 1.5, // Adjust the speed of the animation
-              ease: "easeInOut",
-              repeat: Infinity, // Infinite loop
-            }}
-          >
-            <LuPhoneCall className="text-5xl text-sky-500 " />
-            <div className="space-y-2 text-lg">
-              <p className="">We always take care of your smile</p>
-              <span className="font-semibold text-2xl">24/7 Emergency</span>
-              <h5>23489023-328374</h5>
-            </div>
-          </motion.div>
+          <div className="flex  justify-center md:justify-start">
+            <motion.div
+              className="bg-sky-500 text-white  rounded-xl p-4 inline-flex  items-center gap-4"
+              animate={{
+                x: [0, 15, 0], // Moves to 20px right and then back to 0px
+              }}
+              transition={{
+                duration: 1.5, // Adjust the speed of the animation
+                ease: "easeInOut",
+                repeat: Infinity, // Infinite loop
+              }}
+            >
+              <LuPhoneCall className="text-5xl text-sky-500 p-2 bg-white rounded-full " />
+              <div className="space-y-2 lg:text-lg">
+                <p className="">We always take care of your smile</p>
+                <span className="font-semibold text-lg lg:text-2xl">
+                  24/7 Emergency
+                </span>
+                <h5>23489023-328374</h5>
+              </div>
+            </motion.div>
+          </div>
         </div>
         {/* img */}
         <div className="md:w-1/2 relative gap-5 grid grid-cols-2 p-5">
