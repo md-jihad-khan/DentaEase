@@ -3,17 +3,39 @@ import doctor from "../../assets/about.png";
 import doctor2 from "../../assets/doctor2.png";
 import CountUp from "react-countup";
 import { FaArrowRight } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
 
 const AboutUs = () => {
+  const [inView, setInView] = useState(false);
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.5 }
+    );
+    const img = imageRef.current;
+    if (img) observer.observe(img);
+    return () => img && observer.unobserve(img);
+  }, []);
+
   return (
     <section className="my-10 mt-20 md:w-11/12 mx-auto">
       <div className="flex flex-col md:flex-row items-center justify-between">
         {/* img */}
         <div className="md:w-1/2 relative p-5">
-          <img src={doctor} className="rounded-2xl " alt="" />
+          <img
+            src={doctor}
+            ref={imageRef}
+            className={` rounded-2xl ${inView ? "initial-animation" : ""}`}
+            alt=""
+          />
           <img
             src={doctor2}
-            className="rounded-2xl absolute w-1/3 bottom-2 right-2 border-8 border-sky-50  "
+            ref={imageRef}
+            className={` rounded-2xl absolute w-1/3 bottom-2 right-2 border-8 border-sky-50 ${
+              inView ? "initial-animation" : ""
+            }`}
             alt=""
           />
         </div>

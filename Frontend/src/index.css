@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+img {
+  -webkit-mask-image: linear-gradient(
+    45deg,
+    #000 25%,
+    rgba(0, 0, 0, 0.2) 50%,
+    #000 75%
+  );
+  mask-image: linear-gradient(
+    45deg,
+    #000 25%,
+    rgba(0, 0, 0, 0.2) 50%,
+    #000 75%
+  );
+  -webkit-mask-size: 800%;
+  mask-size: 500%;
+  -webkit-mask-position: 0;
+  mask-position: 0;
+  z-index: 0;
+  transition: mask-position 3s ease, -webkit-mask-position 2s ease;
+}
+
+img.initial-animation {
+  -webkit-mask-position: 120%;
+  mask-position: 120%;
+  transition: mask-position 2s ease, -webkit-mask-position 2s ease;
+}

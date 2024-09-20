@@ -5,8 +5,22 @@ import { LuPhoneCall } from "react-icons/lu";
 import { FaUserDoctor } from "react-icons/fa6";
 import CountUp from "react-countup";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const Faq = () => {
+  const [inView, setInView] = useState(false);
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.5 }
+    );
+    const img = imageRef.current;
+    if (img) observer.observe(img);
+    return () => img && observer.unobserve(img);
+  }, []);
+
   return (
     <section className="my-10 mt-20 md:w-11/12 mx-auto">
       <div className="flex flex-col-reverse  md:flex-row items-center justify-between">
@@ -82,7 +96,7 @@ const Faq = () => {
         </div>
         {/* img */}
         <div className="md:w-1/2 relative gap-5 grid grid-cols-2 p-5">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-3/4 bg-white flex gap-3 items-center p-2 lg:p-4 rounded-xl ">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-3/4 bg-white z-10 flex gap-3 items-center p-2 lg:p-4 rounded-xl ">
             <FaUserDoctor className="text-white bg-sky-500  w-10 h-10 p-2 rounded-full" />
             <div>
               <CountUp
@@ -96,9 +110,26 @@ const Faq = () => {
               <p className="font-semibold"> Expert Doctor</p>
             </div>
           </div>
-          <img src={img1} alt="" className="rounded-lg" />
-          <img src={img2} alt="" className="rounded-lg" />
-          <img src={img3} alt="" className="col-span-2 rounded-lg" />
+          <img
+            src={img1}
+            className={` rounded-3xl ${inView ? "initial-animation" : ""}`}
+            ref={imageRef}
+            alt=""
+          />
+          <img
+            src={img2}
+            alt=""
+            className={` rounded-3xl ${inView ? "initial-animation" : ""}`}
+            ref={imageRef}
+          />
+          <img
+            src={img3}
+            alt=""
+            className={` rounded-3xl col-span-2 ${
+              inView ? "initial-animation" : ""
+            }`}
+            ref={imageRef}
+          />
         </div>
       </div>
     </section>
