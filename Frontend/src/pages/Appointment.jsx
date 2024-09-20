@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-multi-date-picker";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import { TbFidgetSpinner } from "react-icons/tb";
 import Swal from "sweetalert2";
 import axios from "axios";
 import "react-multi-date-picker/styles/layouts/mobile.css";
+import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
+import img1 from "../assets/faq2.png";
 
 const Appointment = () => {
   const [time, setTime] = useState(null);
   const [date, setDate] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [inView, setInView] = useState(false);
+  const imageRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,25 +98,65 @@ const Appointment = () => {
     }
   };
 
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= Math.floor(rating)) {
+        stars.push(<FaStar key={i} className="text-yellow-500" />);
+      } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
+        stars.push(<FaStarHalfAlt key={i} className="text-yellow-500" />);
+      } else {
+        stars.push(<FaRegStar key={i} className="text-yellow-500" />);
+      }
+    }
+    return stars;
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.5 }
+    );
+    const img = imageRef.current;
+    if (img) observer.observe(img);
+    return () => img && observer.unobserve(img);
+  }, []);
+
   return (
     <section>
       <h3 className="text-5xl font-bold text-center text-sky-500 my-5">
         Appointment
       </h3>
 
-      <div className="flex flex-col md:flex-row gap-5 mb-9  px-5 items-center">
-        <div className="md:w-1/2 p-10">
+      <div className="flex flex-col md:flex-row gap-5 mb-9  px-5 items-center ">
+        <div className="md:w-1/2 p-10 relative">
           <img
-            className="object-cover w-full rounded-md"
-            src="https://images.pexels.com/photos/6812561/pexels-photo-6812561.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            ref={imageRef}
+            className={`object-cover w-full rounded-3xl ${
+              inView ? "initial-animation" : ""
+            }`}
+            src={img1}
             alt=""
           />
+          <div className="bg-sky-500 text-white p-3 w-3/4 rounded-3xl border-white border-4 absolute right-0 bottom-5 ">
+            <div className="flex items-center gap-5">
+              <h5 className="text-5xl font-bold">4.5/5</h5>{" "}
+              <p className="font-semibold">
+                This rate is given by user after visiting our location
+              </p>
+            </div>
+
+            <div className="flex gap-5 items-center border-t mt-3 pt-3 text-xl">
+              <span className="flex ">{renderStars(4.5)}</span>
+              <p className="font-bold">For excellence services</p>
+            </div>
+          </div>
         </div>
         <div className="w-full md:w-1/2">
           <form onSubmit={handleSubmit}>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Name</span>
+              <label className="label font-bold">
+                <span className="label-text ">Name</span>
               </label>
               <input
                 type="text"
@@ -124,7 +168,7 @@ const Appointment = () => {
             </div>
 
             <div className="form-control">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Email</span>
               </label>
               <input
@@ -136,7 +180,7 @@ const Appointment = () => {
               />
             </div>
             <div className="form-control">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Phone Number</span>
               </label>
               <input
@@ -150,7 +194,7 @@ const Appointment = () => {
 
             <div className="flex flex-col md:flex-row gap-5">
               <div className="form-control">
-                <label className="label">
+                <label className="label font-bold">
                   <span className="label-text">Appointment Date</span>
                 </label>
                 <DatePicker
@@ -166,7 +210,7 @@ const Appointment = () => {
                 />
               </div>
               <div className="form-control">
-                <label className="label">
+                <label className="label font-bold">
                   <span className="label-text">Appointment Time</span>
                 </label>
                 <DatePicker
@@ -179,13 +223,13 @@ const Appointment = () => {
                     setTime(time);
                   }}
                   format="hh:mm A"
-                  plugins={[<TimePicker />]}
+                  plugins={[<TimePicker hideSeconds />]}
                 />
               </div>
             </div>
 
             <div className="form-control">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Comment</span>
               </label>
               <textarea
@@ -197,7 +241,7 @@ const Appointment = () => {
 
             <button
               disabled={loading}
-              className="block mt-5  w-full p-3 text-center rounded-sm bg-sky-500 text-white"
+              className="block mt-5  w-full p-3 text-center btn bg-sky-500 text-white rounded-xl"
               type="submit"
             >
               {loading ? (

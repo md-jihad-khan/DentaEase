@@ -1,4 +1,3 @@
-import cosmetic from "../../assets/cosmetic.png";
 import treatment from "../../assets/treatment.png";
 import ortho from "../../assets/ortho.png";
 import surgery from "../../assets/surgery.png";
