@@ -9,6 +9,7 @@ import AllPatients from "../pages/dashboard/AllPatients";
 import AdminLogin from "../pages/AdminLogin";
 import ProtectedRoute from "./ProtectedRoute";
 import Home from "../pages/Home";
+import Profile from "../pages/dashboard/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      {
+        index: true,
+        element: <Profile />,
+      },
       {
         path: "allAppointments",
         element: (

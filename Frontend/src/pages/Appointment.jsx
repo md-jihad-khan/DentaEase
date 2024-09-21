@@ -140,15 +140,17 @@ const Appointment = () => {
           />
           <div className="bg-sky-500 text-white p-3 w-3/4 rounded-3xl border-white border-4 absolute right-0 bottom-5 ">
             <div className="flex items-center gap-5">
-              <h5 className="text-5xl font-bold">4.5/5</h5>{" "}
-              <p className="font-semibold">
+              <h5 className="text-xl md:text-5xl font-bold">4.5/5</h5>{" "}
+              <p className="font-semibold text-xs md:text-base">
                 This rate is given by user after visiting our location
               </p>
             </div>
 
             <div className="flex gap-5 items-center border-t mt-3 pt-3 text-xl">
               <span className="flex ">{renderStars(4.5)}</span>
-              <p className="font-bold">For excellence services</p>
+              <p className="font-bold text-xs md:text-base">
+                For excellence services
+              </p>
             </div>
           </div>
         </div>

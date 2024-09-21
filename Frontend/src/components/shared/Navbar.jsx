@@ -22,9 +22,9 @@ const Navbar = () => {
               ? "text-sky-500 border-b-2 rounded-none border-sky-500 font-bold"
               : "font-normal  "
           }
-          to={"/apartments"}
+          to={"/appointment"}
         >
-          About us
+          Appointment
         </NavLink>
       </li>
     </>

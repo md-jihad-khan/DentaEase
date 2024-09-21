@@ -102,6 +102,42 @@ async function run() {
       });
     };
 
+    app.get("/chart-data", async (req, res) => {
+      try {
+        const { year, month } = req.query;
+
+        // Prepare appointment query based on formatted date
+        let appointmentQuery = { date: { $regex: `${year}` } };
+
+        // If month is provided, refine the appointment query
+        if (month) {
+          const monthName = moment(month, "MM").format("MM"); // Convert month number to two-digit format
+          appointmentQuery.date = { $regex: `${monthName}/${year}` };
+        }
+
+        // Fetch appointments
+        const appointments = await appointmentCollection
+          .find(appointmentQuery)
+          .toArray();
+
+        let patientQuery = {
+          createdAt: {
+            $gte: `${month}/01/${year}`,
+            $lte: `${month}/31/${year}`,
+          },
+        };
+
+        // Fetch patients
+        const patients = await patientsCollection.find(patientQuery).toArray();
+
+        // Return both appointments and patients data
+        res.status(200).json({ appointments, patients });
+      } catch (error) {
+        console.error("Error fetching chart data:", error); // Log the error for debugging
+        res.status(500).send({ error: "Failed to fetch data" });
+      }
+    });
+
     app.get("/patients", verifyAdminAccess, async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = 10;
@@ -139,6 +175,17 @@ async function run() {
     app.post("/patients", async (req, res) => {
       try {
         const patient = req.body;
+
+        // Get the current date
+        const now = new Date();
+
+        // Format the date as MM/DD/YYYY
+        const formattedDate = `${
+          now.getMonth() + 1
+        }/${now.getDate()}/${now.getFullYear()}`;
+
+        patient.createdAt = formattedDate;
+
         const result = await patientsCollection.insertOne(patient);
         res.status(201).send(result);
       } catch (error) {
